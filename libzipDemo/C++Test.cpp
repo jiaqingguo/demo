@@ -202,42 +202,9 @@ void CompressDirectory(std::filesystem::path directoryPath,
 }
 
 
-//void CompressMultiple(const std::vector<fs::path>& paths, const fs::path& zipFilePath) {
-//    int errorCode = 0;
-//    zip_t* zipArchive = zip_open(zipFilePath.u8string().c_str(), ZIP_CREATE | ZIP_TRUNCATE, &errorCode);
-//    if (!zipArchive) {
-//        zip_error_t zipError;
-//        zip_error_init_with_code(&zipError, errorCode);
-//        std::cerr << "Failed to open output file " << zipFilePath << ": " << zip_error_strerror(&zipError) << std::endl;
-//        zip_error_fini(&zipError);
-//        return;
-//    }
-//
-//    for (const auto& path : paths) {
-//        if (fs::exists(path)) {
-//            if (fs::is_regular_file(path)) {
-//                CompressFile2Zip(path, path.filename().u8string().c_str(), zipArchive);
-//            }
-//            else if (fs::is_directory(path)) {
-//                CompressDirectory2Zip(path, path, zipArchive);
-//            }
-//        }
-//        else {
-//            std::cerr << "Path does not exist: " << path << std::endl;
-//        }
-//    }
-//
-//    // 关闭 ZIP 文件
-//    errorCode = zip_close(zipArchive);
-//    if (errorCode != 0) {
-//        zip_error_t zipError;
-//        zip_error_init_with_code(&zipError, errorCode);
-//        std::cerr << zip_error_strerror(&zipError) << std::endl;
-//        zip_error_fini(&zipError);
-//    }
-//}
 
-void CompressMultiple(const std::vector<fs::path>& paths, const fs::path& zipFilePath) {
+// 只支持多个文件 目录的话会缺少层级;
+void CompressMultFile(const std::vector<fs::path>& paths, const fs::path& zipFilePath) {
     int errorCode = 0;
     zip_t* zipArchive = zip_open(zipFilePath.u8string().c_str(), ZIP_CREATE | ZIP_TRUNCATE, &errorCode);
     if (!zipArchive) {
@@ -248,8 +215,10 @@ void CompressMultiple(const std::vector<fs::path>& paths, const fs::path& zipFil
         return;
     }
 
-    for (const auto& path : paths) {
-        if (fs::exists(path)) {
+    for (const auto& path : paths)
+    {
+        if (fs::exists(path)) 
+        {
             if (fs::is_regular_file(path)) {
                 CompressFile2Zip(path, path.filename().u8string().c_str(), zipArchive);
             }
@@ -271,18 +240,26 @@ void CompressMultiple(const std::vector<fs::path>& paths, const fs::path& zipFil
         zip_error_fini(&zipError);
     }
 }
+
+void CompressMult2Zip(const std::vector<fs::path>& paths, const fs::path& zipFilePath)
+{
+
+}
 int main()
 {
     // libzip库的使用
   // 要压缩的文件和目录列表
     std::vector<fs::path> paths = {
         "D:/CS/贾庆国/qsvgd.dll",
-        "D:/CS/贾庆国/printsupport",
+        "D:/CS/贾庆国/test.txt",
+        "D:/CS/贾庆国/qjpegd.dll",
+        "D:/CS/贾庆国/qwebpd.dll",
+    
         // 可以在这里添加更多的文件和目录
     };
 
     // 压缩成一个 ZIP 文件
-    CompressMultiple(paths, "D:/CS/贾庆国/multiple_files.zip");
+    CompressMultFile(paths, "D:/CS/贾庆国/multiple_files.zip");
 
    // std::vector<std::string> filenames;
    // std::filesystem::path zip_file_path = "D:/CS/贾庆国/10.27.rar";
